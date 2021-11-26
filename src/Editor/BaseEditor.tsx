@@ -108,7 +108,7 @@ export const BaseEditor = defineComponent({
     }
   },
   mounted() {
-    const id = 'jfkda;ghda'
+    const id = 'fdafdfdfa4tq3vfgdafdafdaf'
     const ydoc = new Y.Doc()
     const provider = new WebrtcProvider(id, ydoc)
     this. provider = provider
