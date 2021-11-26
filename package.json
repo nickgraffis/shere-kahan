@@ -26,6 +26,7 @@
     "@tiptap/vue-3": "^2.0.0-beta.80",
     "@vitejs/plugin-vue-jsx": "^1.2.0",
     "@vueuse/core": "^6.9.1",
+    "@vueuse/head": "^0.7.2",
     "codemirror-editor-vue3": "^0.2.4",
     "deasync": "^0.1.24",
     "faunadb": "^4.4.1",

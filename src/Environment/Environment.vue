@@ -9,12 +9,15 @@
       <User />
     </div>
     <div class="flex-grow flex">
-      <div class="flex-shrink-0" :style="{ width: computedFoldersX + 'px' }">
+      <div class="flex-shrink-0 overflow-hidden" :style="{ width: computedFoldersX + 'px' }">
         <Folders />
       </div>
       <div ref="bar" class="w-1 cursor-move h-full bg-indigo-400 flex-shrink-0 z-20"></div>
       <div class="flex-grow p-2">
-        <Editor :document="document" />
+        {{ data || 'huh' }}
+        <div v-if="data">
+          <Editor :document="data" />
+        </div>
       </div>
     </div>
   </div>
@@ -31,12 +34,26 @@
   import { computed, ref } from 'vue'
   import { useDraggable } from '@vueuse/core'
   import { useWindowSize } from '@vueuse/core'
+  import { useCreateDocument, useCurrentDocument, useDocument, useSetCurrentDocument } from '../hooks/useQueries';
+  import { useHead } from '@vueuse/head'
+  useHead({
+    style: [
+      {
+        children: `body {background-color: white}`,
+      },
+    ],
+  })
+
   const { width, height } = useWindowSize()
   const bar = ref<HTMLElement | null>(null)
   const { x: foldersX } = useDraggable(bar, {
     initialValue: { x: 350, y: 40 },
   })
-
+  const setCurrentDoc = useSetCurrentDocument()
+  const { data } = useCurrentDocument()
+  setTimeout(() => {
+    setCurrentDoc.mutate('316295743902057025')
+  }, 1000)
   const computedFoldersX = computed(() => {
     return foldersX.value > 300 ? foldersX.value : 0
   })

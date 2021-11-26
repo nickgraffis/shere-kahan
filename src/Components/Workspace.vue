@@ -1,7 +1,6 @@
 <template>
   <div @click="expandWorkspace(workspace.ref.id)" class="w-full items-start flex font-semibold px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-purple-200">
-    <div class="flex space-x-2 items-start flex-grow">
-      <ri:server-line class="flex-shrink-0" />
+    <div class="flex space-x-2 items-start flex-grow border-l-5 border-green-400 pl-3">
       <div class="space-y-1">
         <p class="whitespace-nowrap">{{ workspace.data.name }}</p>
         <p class="text-xs font-normal">{{workspace.data.lastUpdated.time}}</p>

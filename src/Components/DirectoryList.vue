@@ -2,7 +2,7 @@
   <div>
     <div v-for="dir in directories">
       <div 
-      v-if="dir"
+      v-if="dir.ref.collection.id === 'directories'"
       >
         <div @click="expandFolder(dir.ref.id)" class="w-full items-center flex font-semibold px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-purple-200">
           <div class="flex space-x-2 items-center flex-grow">
@@ -20,7 +20,7 @@
         </div>
       </div>
       <div v-else>
-        <div class="w-full items-center space-y-2 px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-purple-200">
+        <div @click="setCurrentDocument(dir.ref.id)" class="w-full items-center space-y-2 px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-purple-200">
           <p 
           class="font-bold whitespace-nowrap truncate"
           >
@@ -43,7 +43,7 @@
         <span class="whitespace-nowrap">Create Directory</span>
       </div>
     </div>
-    <div class="w-full items-center flex font-semibold px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-purple-200">
+    <div @click="createDocument()" class="w-full items-center flex font-semibold px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-purple-200">
       <div class="flex space-x-2 items-center flex-grow">
         <ri:file-add-line class="flex-shrink-0" />
         <span class="whitespace-nowrap">Create Document</span>
@@ -53,7 +53,9 @@
 </template>
 
 <script setup lang="ts">
+import { Collection, Ref } from "faunadb"
 import { ref } from "vue"
+import { useCreateDocument, useSetCurrentDocument } from "../hooks/useQueries"
 const { directories } = defineProps<{ directories: any }>()
 const expanded = ref<string[]>([])
 const creatingDirectory = ref<boolean>(false)
@@ -64,6 +66,21 @@ const expandFolder = (id: string) => {
   } else {
     expanded.value.push(id)
   }
+}
+
+const createDoc = useCreateDocument()
+
+const createDocument = () => {
+  createDoc.mutate({
+    parent: Ref(Collection(directories[0].ref.value.collection.value.id), directories[0].ref.value.id),
+    name: "New Document",
+  })
+}
+
+const setCurrentDoc = useSetCurrentDocument()
+
+const setCurrentDocument = (id) => {
+  setCurrentDoc.mutate(id)
 }
 
 const createDirectory = () => {
