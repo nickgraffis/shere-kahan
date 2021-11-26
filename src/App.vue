@@ -46,6 +46,7 @@ import Environment from './Environment/Environment.vue'
 import { defineComponent, ref } from "vue";
 import { useQuery, useQueryProvider } from "vue-query";
 import { useLogin, useLogout, useToken } from './hooks/useQueries';
+import Zelda from './Components/Zelda.vue'
 const approved = ref(false)
 const secret = window.location.href.split('?secret=')[1]
 const login = useLogin()
