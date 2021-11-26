@@ -1,10 +1,15 @@
 <template>
-  <BaseEditor />
+  <BaseEditor :document="document" />
 </template>
 
 <script setup lang="ts">
   import { BaseEditor } from './BaseEditor';
-
+  defineProps({
+    document: {
+      type: Object,
+      required: true,
+    }
+  })
 </script>
 
 <style lang="css">

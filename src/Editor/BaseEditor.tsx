@@ -26,6 +26,9 @@ const getRandomElement = (list: any[]) => {
 }
 
 export const BaseEditor = defineComponent({
+  props: {
+    document: {}
+  },
   data(): {
     editor: Ref<Editor> | null,
     provider: WebrtcProvider | null,
@@ -105,65 +108,64 @@ export const BaseEditor = defineComponent({
     }
   },
   mounted() {
-    this.getDocument().then(({ id }) => {
-      const ydoc = new Y.Doc()
-      const provider = new WebrtcProvider(id, ydoc)
-      this. provider = provider
-      this.indexdb = new IndexeddbPersistence(id, ydoc)
-      console.log(this.indexdb)
-      const editor = new Editor({
-        editorProps: {
-          attributes: {
-            class: 'w-full h-full focus:outline-none py-4',
-          },
+    const id = 'jfkda;ghda'
+    const ydoc = new Y.Doc()
+    const provider = new WebrtcProvider(id, ydoc)
+    this. provider = provider
+    this.indexdb = new IndexeddbPersistence(id, ydoc)
+    console.log(this.indexdb)
+    const editor = new Editor({
+      editorProps: {
+        attributes: {
+          class: 'w-full h-full focus:outline-none py-4',
         },
-        onUpdate: () => {
-          if (this.saved) this.saved = false
-          console.log(this.editor?.storage)
-        },
-        onSelectionUpdate: (state) => {
-          this.updateSelection(state as { editor: Editor, transaction: any })
-        },
-        onBlur: ({ editor }) => {
-          editor.commands.setHighlight({ color: '#c7d2fe' })
-        },
-        onFocus: ({ editor }) => {
-          editor.commands.unsetHighlight()
-        },
-        content: '<CodeMirrior />',
-        extensions: [
-          CodeBlockLowlight.configure({
-            lowlight,
-          }),
-          StarterKit.configure({
-            codeBlock: false,
-            history: false,
-          }),
-          Highlight.configure({ multicolor: true }),
-          Typography,
-          HorizontalRule,
-          TaskList,
-          Underline,
-          Link,
-          CharacterCount,
-          TaskItem.configure({
-            nested: true,
-          }),
-          TextAlign.configure({
-            types: ['heading', 'paragraph'],
-          }),
-          Collaboration.configure({
-            document: ydoc,
-          }),
-          CollaborationCursor.configure({
-            provider: this.provider,
-            user: this.currentUser,
-          }),
-        ]
-      })
-      this.editor = ref(editor as any)
-      this.autoSave()
+      },
+      onUpdate: () => {
+        if (this.saved) this.saved = false
+        console.log(this.editor?.storage)
+      },
+      onSelectionUpdate: (state) => {
+        this.updateSelection(state as { editor: Editor, transaction: any })
+      },
+      onBlur: ({ editor }) => {
+        editor.commands.setHighlight({ color: '#c7d2fe' })
+      },
+      onFocus: ({ editor }) => {
+        editor.commands.unsetHighlight()
+      },
+      content: '<CodeMirrior />',
+      extensions: [
+        CodeBlockLowlight.configure({
+          lowlight,
+        }),
+        StarterKit.configure({
+          codeBlock: false,
+          history: false,
+        }),
+        Highlight.configure({ multicolor: true }),
+        Typography,
+        HorizontalRule,
+        TaskList,
+        Underline,
+        Link,
+        CharacterCount,
+        TaskItem.configure({
+          nested: true,
+        }),
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
+        Collaboration.configure({
+          document: ydoc,
+        }),
+        CollaborationCursor.configure({
+          provider: this.provider,
+          user: this.currentUser,
+        }),
+      ]
     })
+    this.editor = ref(editor as any)
+    this.autoSave()
   },
   render() {
     return (<>

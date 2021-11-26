@@ -1,6 +1,6 @@
 <template>
   <div class="w-screen h-screen flex flex-col">
-    <div class="w-full px-4 py-3 bg-white flex justify-between">
+    <div class="w-full px-4 py-3 bg-white flex justify-between border-b-4 border-indigo-400">
       <div class="flex space-x-4 items-center font-bold text-xl">
         <Zelda />
         <span>SHERE KAHAN</span>
@@ -9,9 +9,12 @@
       <User />
     </div>
     <div class="flex-grow flex">
-      <Folders />
-      <div class="flex-grow">
-        <Editor />
+      <div class="flex-shrink-0" :style="{ width: computedFoldersX + 'px' }">
+        <Folders />
+      </div>
+      <div ref="bar" class="w-1 cursor-move h-full bg-indigo-400 flex-shrink-0 z-20"></div>
+      <div class="flex-grow p-2">
+        <Editor :document="document" />
       </div>
     </div>
   </div>
@@ -25,5 +28,16 @@
   import { defineComponent } from "vue";
   import { useQuery, useQueryProvider } from "vue-query";
   import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-  useQueryProvider();
+  import { computed, ref } from 'vue'
+  import { useDraggable } from '@vueuse/core'
+  import { useWindowSize } from '@vueuse/core'
+  const { width, height } = useWindowSize()
+  const bar = ref<HTMLElement | null>(null)
+  const { x: foldersX } = useDraggable(bar, {
+    initialValue: { x: 350, y: 40 },
+  })
+
+  const computedFoldersX = computed(() => {
+    return foldersX.value > 300 ? foldersX.value : 0
+  })
 </script>

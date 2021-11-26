@@ -36,7 +36,7 @@
           <ToolBarDropDown :editor="editor" :button-group="buttonGroup" />
         </div>
       </div>
-      <div v-if="editor.storage.collaborationCursor" class="flex">
+      <div v-if="editor.storage.collaborationCursor && editor.storage.collaborationCursor.users.length > 1" class="flex">
         <div v-for="user in editor.storage.collaborationCursor.users">
           <div class="ring-5 ring-white w-8 h-8 rounded-full" :style="{ backgroundColor: user.color }">
 

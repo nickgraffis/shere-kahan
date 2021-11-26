@@ -1,7 +1,9 @@
 <template>
-  <div class="w-96">
-    <div v-if="isLoading">
-      Loading...
+  <div class="w-full p-2">
+    <div v-if="isLoading" class="space-y-4">
+      <div v-for="_ in Array(6)">
+        <div class="w-full h-16 bg-gray-200 animate-pulse rounded-lg"></div>
+      </div>
     </div>
     <div v-else>
       <div v-for="workspace in data">

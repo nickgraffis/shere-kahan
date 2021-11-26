@@ -162,6 +162,7 @@ export const useLogin = () => {
     {
       onError: (err: Error) => {
         console.log(err);
+        queryClient.setQueryData(['token'], data);
       },
       onSettled: (data) => {
         console.log('settled', data);
