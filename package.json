@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.4.2",
+    "@netlify/functions": "^0.10.0",
     "@stewartmcgown/grammarly-api": "^1.1.2",
     "@tiptap/extension-character-count": "*",
     "@tiptap/extension-code-block-lowlight": "*",
@@ -44,6 +45,7 @@
     "@iconify-json/eva": "^1.0.1",
     "@iconify-json/ri": "^1.0.1",
     "@vitejs/plugin-vue": "^1.9.3",
+    "@windicss/plugin-animations": "^1.0.9",
     "typescript": "^4.4.3",
     "unplugin-icons": "^0.12.18",
     "unplugin-vue-components": "^0.17.2",

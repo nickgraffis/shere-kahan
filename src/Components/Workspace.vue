@@ -13,14 +13,14 @@
     <div v-if="isLoading">
       Loading...
     </div>
-    <div v-else-if="data">
+    <div v-else>
       <DirectoryList :directories="data" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, unref } from "vue";
 import { useDirectories } from "../hooks/useQueries";
 import DirectoryList from "./DirectoryList.vue";
 const expanded = ref<string[]>([])

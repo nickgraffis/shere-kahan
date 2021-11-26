@@ -3,6 +3,8 @@
     <div class="w-full px-4 py-3 bg-white flex justify-between">
       <div class="flex space-x-4 items-center font-bold text-xl">
         <Zelda />
+        <span>SHERE KAHAN</span>
+        <span class="p-1 ring-2 ring-black text-xs font-semibold rounded-lg">ALPHA</span>
       </div>
       <User />
     </div>
