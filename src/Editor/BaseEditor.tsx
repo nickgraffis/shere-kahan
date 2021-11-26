@@ -112,7 +112,10 @@ export const BaseEditor = defineComponent({
     const ydoc = new Y.Doc()
     const provider = new WebrtcProvider(id, ydoc)
     this. provider = provider
-    this.indexdb = new IndexeddbPersistence(id, ydoc)
+    const indexddb = new IndexeddbPersistence(id, ydoc)
+    indexddb.on('synced', () => {
+      console.log('connected')
+    })
     console.log(this.indexdb)
     const editor = new Editor({
       editorProps: {
@@ -190,5 +193,9 @@ export const BaseEditor = defineComponent({
         </div>
       }
     </>)
+  },
+  beforeUnmount() {
+    this.editor.destroy()
+    this.provider.destroy()
   }
 })
