@@ -13,7 +13,7 @@ function throwNative(error: Error) {
 }
 
 /* Helper buddy for removing async/await try/catch litter */
-function safeAwait(promise: Promise<any>, finallyFunc?: () => void) {
+function safeAwait<T = any>(promise: Promise<T>, finallyFunc?: () => void) {
   return promise.then(data => {
     if (data instanceof Error) {
       throwNative(data)

@@ -48,7 +48,7 @@
   import { Editor } from "@tiptap/vue-3";
   import ToolBarGroupButton from './ToolBarGroupButton.vue';
   import { ButtonToActionMap as bmp } from './data';
-  import { Icon as I } from '../../Components/Icon';
+  import { Icon as I } from '@shared/components/Icon';
   import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
   import { computed } from 'vue';
   const {
@@ -61,10 +61,10 @@
   const isMac = computed(() => window.navigator.userAgent.includes('Mac'))
 
   const determineActiveState = (id: Buttons) => {
-    if (typeof bmp[id].isActive === 'function') {
+    if (typeof bmp[id]?.isActive === 'function') {
       // Why is typescript forcing me to cast the type
       // when I am checking if the function is defined?
-      return (bmp[id].isActive as (editor: Editor) => boolean)(editor)
+      return bmp[id]?.isActive ? (bmp[id].isActive as (editor: Editor) => boolean)(editor) : false
     }
 
     return false

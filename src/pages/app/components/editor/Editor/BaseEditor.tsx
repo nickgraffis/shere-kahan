@@ -17,8 +17,8 @@ import { toolbarData } from "./ToolBar/data";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import * as Y from 'yjs'
 import { IndexeddbPersistence } from 'y-indexeddb'
-import { Collaboration } from './Collaboration'
-import { CollaborationCursor } from './CollaborationCursor'
+import { Collaboration } from '../../../../../editor/Collaboration'
+import { CollaborationCursor } from '../../../../../editor/CollaborationCursor'
 import { WebrtcProvider } from 'y-webrtc'
 
 const getRandomElement = (list: any[]) => {
@@ -108,7 +108,7 @@ export const BaseEditor = defineComponent({
     }
   },
   mounted() {
-    const id = 'fdafdfdfa4tq3vfgdafdafdaf'
+    const id = 'fdafdfdfa4tq3vfgdafdafdaf---dev'
     const ydoc = new Y.Doc()
     const provider = new WebrtcProvider(id, ydoc)
     this. provider = provider
@@ -136,7 +136,7 @@ export const BaseEditor = defineComponent({
       onFocus: ({ editor }) => {
         editor.commands.unsetHighlight()
       },
-      content: '<CodeMirrior />',
+      content: 'hello',
       extensions: [
         CodeBlockLowlight.configure({
           lowlight,
@@ -195,7 +195,7 @@ export const BaseEditor = defineComponent({
     </>)
   },
   beforeUnmount() {
-    this.editor.destroy()
-    this.provider.destroy()
+    this.editor && this.editor.destroy()
+    this.provider && this.provider.destroy()
   }
 })

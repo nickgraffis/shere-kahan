@@ -9,3 +9,4 @@ declare module '*.vue' {
 
 declare module '@tiptap/extension-typography'
 declare module '@tiptap/extension-highlight'
+declare module 'notiwind';

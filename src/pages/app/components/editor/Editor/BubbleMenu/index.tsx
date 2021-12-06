@@ -1,11 +1,11 @@
 import { Editor } from "@tiptap/vue-3";
 import { defineComponent } from "vue";
 import { BubbleMenu as BaseBubbleMenu } from "./BubbleMenu";
-import { Icon } from "../../Components/Icon";
+import { Icon } from "../../../../../../shared/components/Icon";
 
 export const BubbleMenu = defineComponent({
   props: {
-    editor: Editor 
+    editor: Editor
   },
   render() {
     return (<>
