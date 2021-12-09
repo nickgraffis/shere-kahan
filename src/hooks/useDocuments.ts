@@ -1,21 +1,21 @@
 import { queryClient } from "./useQueries"
 import { useMutation, useQuery } from "vue-query"
 import faunadb, { query as q } from "faunadb"
-import { computed, reactive, Ref, ref, toRefs } from "vue"
-import { AccessToken, Account } from "../types"
+import { reactive, Ref, ref, toRefs } from "vue"
+import { AccessToken, Account, ShereDocument } from "../types"
+import safeAwait from "@root/utils/safeAwait"
 
+/** currentDocument Ref is Deprecated. Use useCurrentDocument hook instead. */
 export const currentDocument = ref<string | null>(null)
-const enabled = computed(
-	() => 
-		!!currentDocument.value
-)
 
+/** A reactive state that holds the currentDocumentId */
 const state = reactive<{
   currentDocument: string;
 }>({
 	currentDocument: ""
 })
 
+/** A hook to set the current document id and fetch it */
 export const useCurrentDocument = () => {
 
 	const setCurrentDocument = (documentId: string) => {
@@ -25,11 +25,21 @@ export const useCurrentDocument = () => {
 	return { ...toRefs(state), setCurrentDocument }
 }
 
-export const useDocument = (documentId: Ref<string>) => useQuery(
+/** 
+ * A hook to fetch a document 
+ * The documents change shape often though;
+ * the life cycle of a document is:
+ * - we fetch the document preview after a workspace is fetched
+ * 	-- see useWorkspace
+ * - we fetch the document after it is selected and that contains children
+ * - if the document is already set to be expanded we keep that flag
+ * 	-- see useExpandDocument
+ */
+export const useDocument = (documentId: Ref<string>) => useQuery<ShereDocument>(
 	["documents", documentId.value ],
 	async () => {
-		console.log("DOCUMENT CURRENT", documentId.value)
-		console.log(queryClient.getQueryData("token"))
+		// const { key } = useCurrentToken()
+		// const client = safeAwait(faunaClient())
 		if (
 			!(queryClient.getQueryData("token") as { account: Account, access: AccessToken})?.access.secret
 		) throw new Error("No token")
@@ -37,19 +47,34 @@ export const useDocument = (documentId: Ref<string>) => useQuery(
 			secret: 
         (queryClient.getQueryData("token") as { account: Account, access: AccessToken})?.access.secret
 		})
-		const res: any = await client.query(
+		const document = queryClient.getQueryData(["documents", documentId.value]) as ShereDocument
+		if (typeof document === "object" && "expanded" in document) 
+			queryClient.setQueryData(["documents", documentId.value], { ...document, expanded: document.expanded })
+		const res: ShereDocument = await client.query(
 			q.Call(
 				"GetDocument",
 				documentId.value
 			)
 		)
+		
+		if (typeof document === "object" && "expanded" in document) res.expanded = document.expanded
 		return res
-	},
-	reactive(
-		{
-			enabled
+	}
+)
+
+/** A simple hook that flags a doucment as expanded or not */
+export const useExpandDocument = (documentId: Ref<string>) => useMutation(
+	async (expand?: { expand: boolean }) => {
+		const document = queryClient.getQueryData(["documents", documentId.value]) as ShereDocument
+		if (expand) {
+			document.expanded = expand.expand
+		} else if (!document.expanded) {
+			document.expanded = true
+		} else {
+			document.expanded = false
 		}
-	)
+		queryClient.setQueryData(["documents", documentId.value], document)
+	}
 )
 
 export const useCreateDocument = () => useMutation(
@@ -69,7 +94,9 @@ export const useCreateDocument = () => useMutation(
 				{
 					data: {
 						name: variables.name,
-						parent: q.Ref(q.Collection("workspaces"), variables.parent),
+						parent: variables.parent,
+						accounts: [],
+						public: false,
 						lastUpdated: {
 							at: new Date().toISOString(),
 							by: {
@@ -84,19 +111,10 @@ export const useCreateDocument = () => useMutation(
 		return res
 	},
 	{
-		onSuccess: (res: any) => {
+		onSuccess: (res) => {
 			queryClient.setQueryData(["documents", res.ref.id], res)
-			currentDocument.value = res.ref.id
-		},
-		// onMutate: async (data: any) => {
-		//   console.log(data)
-		//   const fakeId = Math.random()
-		//   currentDocument.value = fakeId;
-		//   queryClient.setQueryData(["documents", fakeId], {});
-		//   queryClient.setQueryData(["directories", ], (old) => {
-        
-		//   })
-		// }
+			state.currentDocument = res.ref.id
+		}
 	}
 )
 

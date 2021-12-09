@@ -29,7 +29,7 @@
       </div>
       <div v-else>
         <DirectoryList
-          :directories="data?.doucments"
+          :documents="data?.doucments"
           :workspace="workspace"
           :width="width"
         />
@@ -43,17 +43,12 @@ import { ref, toRefs } from "vue"
 import { useWorkspace } from "@hooks/useWorkspaces"
 import DirectoryList from "./DirectoryList.vue"
 import { useRouter } from "vue-router"
+import { Workspace } from "@/types"
 const expanded = ref<string[]>([])
-const props = defineProps({
-	workspace: {
-		type: Object,
-		required: true,
-	},
-	width: {
-		type: Number,
-		default: 0,
-	}
-})
+const props = defineProps<{
+  workspace: Workspace
+  width: number
+}>()
 const { workspace, width } = toRefs(props)
 const router = useRouter()
 const { isLoading, data } = useWorkspace(workspace.value.ref.id)

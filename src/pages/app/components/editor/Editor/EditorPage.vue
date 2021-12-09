@@ -4,13 +4,17 @@
     :toolbar="toolbarData"
     :saved="saved"
     /> -->
-  <div v-if="editor"> 
+  <div
+    v-if="editor"
+    class="h-full flex flex-col"
+  > 
     <div
       v-if="data && data.familyTree"
       class="flex space-x-2 p-2"
     >
       <div
         v-for="(item, index) in data.familyTree"
+        :key="index"
         class="flex space-x-2"
       >
         <span v-if="index !== data.familyTree.length - 1">{{ item.data.name }}</span> 
@@ -23,10 +27,138 @@
         <span v-if="index !== data.familyTree.length - 1">/</span>
       </div>
     </div>
-    <div class="flex-grow px-2">
-      {{ status }}
-      {{ provider?.roomName }}
-      <EditorContent :editor="editor" />
+    <div class="flex-grow px-2 flex flex-col">
+      {{ editor.isActive('link') }}
+      <bubble-menu
+        v-if="editor"
+        :should-show="() => editor.isActive('link')"
+        :on-state-change="(e) => console.log(e)"
+        plugin-key="links"
+        class="bubble-menu"
+        :tippy-options="{ animation: false }"
+        :editor="editor"
+      >
+        {{ editor.getAttributes('link').href }}
+      </bubble-menu>
+      <bubble-menu
+        v-if="editor"
+        v-show="editor.isActive('figure') || editor.isActive('custom-image')"
+        plugin-key="images"
+        class="bubble-menu"
+        :tippy-options="{ animation: false }"
+        :editor="editor"
+      >
+        <button
+          @click="editor.chain().focus().imageToFigure().run()"
+        >
+          Fig
+        </button>
+        <button
+          :class="{
+            'is-active': editor.isActive('custom-image', {
+              size: 'small'
+            })
+          }"
+          @click="
+            editor
+              .chain()
+              .focus()
+              .setImage({ size: 'small' })
+              .run()
+          "
+        >
+          Small
+        </button>
+        <button
+          :class="{
+            'is-active': editor.isActive('custom-image', {
+              size: 'medium'
+            })
+          }"
+          @click="
+            editor
+              .chain()
+              .focus()
+              .setImage({ size: 'medium' })
+              .run()
+          "
+        >
+          Medium
+        </button>
+        <button
+          :class="{
+            'is-active': editor.isActive('custom-image', {
+              size: 'large'
+            })
+          }"
+          @click="
+            editor
+              .chain()
+              .focus()
+              .setImage({ size: 'large' })
+              .run()
+          "
+        >
+          Large
+        </button>
+        <span style="color: #aaa">|</span>
+        <button
+          :class="{
+            'is-active': editor.isActive('custom-image', {
+              float: 'left'
+            })
+          }"
+          @click="
+            editor
+              .chain()
+              .focus()
+              .setImage({ float: 'left' })
+              .run()
+          "
+        >
+          Left
+        </button>
+        <button
+          :class="{
+            'is-active': editor.isActive('custom-image', {
+              float: 'none'
+            })
+          }"
+          @click="
+            editor
+              .chain()
+              .focus()
+              .setImage({ float: 'none' })
+              .run()
+          "
+        >
+          No float
+        </button>
+        <button
+          :class="{
+            'is-active': editor.isActive('custom-image', {
+              float: 'right'
+            })
+          }"
+          @click="
+            editor
+              .chain()
+              .focus()
+              .setImage({ float: 'right' })
+              .run()
+          "
+        >
+          Right
+        </button>
+        <span style="color: #aaa">|</span>
+        <button @click="addImage">
+          Change
+        </button>
+      </bubble-menu>
+      <EditorContent
+        :editor="editor"
+        class="flex-grow"
+      />
     </div>
   </div>
 </template>
@@ -34,7 +166,8 @@
 <script setup lang="ts">
 import ToolBar from "./ToolBar/ToolBar.vue"
 import { toolbarData } from "./ToolBar/data"
-import { EditorContent} from "@tiptap/vue-3"
+import { EditorContent } from "@tiptap/vue-3"
+import { BubbleMenu } from "./BubbleMenu/BubbleMenu"
 import { fromBase64, toBase64 } from "@aws-sdk/util-base64-browser"
 import CharacterCount from "@tiptap/extension-character-count"
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight"
@@ -71,6 +204,10 @@ const { data } = defineProps({
 })
 
 const { editor, status, provider, setEditor } = useEditor()
+const shouldShow = ({editor: e}) => { 
+	console.log(editor.value?.isActive("custom-image") || false)
+	return editor.value?.isActive("custom-image") || editor.value?.isActive("figure")
+}
 
 // console.log('NEW EDITOR', data)
 
@@ -281,13 +418,88 @@ tryOnUnmounted(() => {
 .editor::-webkit-scrollbar-thumb:hover {
   @apply bg-black;
 }
+::v-deep ul[data-type="taskList"] {
+	list-style: none;
+	padding: 0;
+}
+::v-deep ul[data-type="taskList"] p {
+	margin: 0;
+}
+::v-deep ul[data-type="taskList"] li {
+	display: flex;
+}
+::v-deep ul[data-type="taskList"] li > label {
+	flex: 0 0 auto;
+	margin-right: 0.5rem;
+	user-select: none;
+}
+::v-deep ul[data-type="taskList"] li > div {
+	flex: 1 1 auto;
+}
+::v-deep .prose > ul > li > *:first-child {
+  margin-top: 0;
+ }
 
-/* Placeholder (on every new line) */
-.ProseMirror .is-empty::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: #ced4da;
-  pointer-events: none;
-  height: 0;
+ ::v-deep .prose > ul[data-type="taskList"] > li::before {
+   visibility: hidden;
+ }
+
+  ::v-deep .prose > ul[data-type="taskList"] li::before {
+   visibility: hidden;
+ }
+
+ ::v-deep .mention {
+  border: 1px solid #000;
+  border-radius: 0.4rem;
+  padding: 0.1rem 0.3rem;
+  box-decoration-break: clone;
+}
+::v-deep hr.ProseMirror-selectednode {
+  border-top: 1px solid #68CEF8;
+}
+
+::v-deep hr {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+::v-deep mark {
+  background-color: #ffe066;
+  padding: 0.125em;
+  border-radius: 0.25em;
+  box-decoration-break: clone;
+}
+
+::v-deep img {
+	 width: 100%;
+	 height: auto;
+	 display: block;
+	 margin-left: auto;
+	 margin-right: auto;
+}
+ ::v-deep img.ProseMirror-selectednode {
+	 outline: 3px solid #68cef8;
+}
+ ::v-deep .custom-image-small {
+	 max-width: 200px;
+}
+ ::v-deep .custom-image-medium {
+	 max-width: 500px;
+}
+ ::v-deep .custom-image-large {
+	 max-width: 100%;
+}
+ ::v-deep .custom-image-float-none {
+	 float: none;
+}
+ ::v-deep .custom-image-float-left {
+	 float: left;
+}
+ ::v-deep .custom-image-float-right {
+	 float: right;
+}
+
+::v-deep .has-focus {
+  outline: 3px solid #68cef8;
 }
 </style>

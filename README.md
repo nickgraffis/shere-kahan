@@ -35,6 +35,81 @@ Since TypeScript cannot handle type information for `.vue` imports, they are shi
 The backend uses [FaunaDB](https://www.fauna.com/fauna/db) for storing data. It is a NoSQL database that is optimized for speed and scalability. We call backend functions directly from UDFs on the frontend.
 
 ```js
-import fauna{ query } from 'faunadb'
+import fauna, { query as q } from 'faunadb'
 
+const client = new faunadb.Client({ secret: "KEY" })
+
+client.query(
+  q.Call(
+    "GetDocument",
+    documentId
+  )
+)
 ```
+
+A good pattern here may be to use the following two helper functions however, to help catch errors, create readable code, and keep within consistent styles.
+
+```js
+import { query as q } from 'faunadb'
+import { faunaClient } from '@root/utils/fauna'
+import { safeAwait } from '@root/utils/safeAwait'
+
+const [tokenError, client] = await safeAwait(faunaClient("KEY"))
+if (tokenError) throw Error(tokenError)
+
+const [queryError, res] = await safeAwait(
+  client.query(
+    q.Call(
+      "GetDocument",
+      documentId
+    )
+  )
+)
+if (queryError) throw Error(queryError)
+```
+
+Within the app you will most likely be reacting with data through hooks powered by Vue-Query. In vite you can import any of these hooks easily through the path alias `@hooks`.
+
+Here are the hooks that we are using and have avaliable:
+
+### useAccount
+The `useAccount` hook is designed to help provide _reactive_ data reguarding the currently logged in account.
+
+`useAccount`: Provides the currently logged in account and meta data regarding the token in use.
+
+```js
+import { useAccount } from '@hooks/useAccount'
+
+const { isLoading, isError, error: accountError, data: account } = useAccount()
+```
+
+`useUpdateAccount`: Provides a mutation function to update the keys passed into the mutation
+
+```js
+import { useUpdateAccount } from '@hooks/useAccount'
+
+const updateAccount = useUpdateAccount()
+
+updateAccount.mutate({
+  name: 'New Name'
+})
+```
+
+### useDocuments
+The `useDocuments` hooks are obviously extremly valuable. There are several hooks to help when working with documents.
+
+`useCurrentDocument`: This is a custom hook that returns the id of the current document and a function to change this reactive variable.
+
+```js
+import { useCurrentDocument } from '@hooks/useDocuments'
+
+const { currentDocument, setCurrentDocument } = useCurrentDocument()
+```
+
+`useDocument`: Get a document
+
+`useCreteDocument`: Create a new document
+
+`useUpdateDocument`: Update a new document
+
+`useExpandDocument`: Expand a documents children in the file system component, means we are just flipping a flag called `expanded` on a document. 

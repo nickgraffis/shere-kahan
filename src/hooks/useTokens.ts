@@ -1,12 +1,28 @@
+import { isAuthenticated } from "./useTokens"
 import { AccessInstance } from "./../types"
 import { useQuery, useMutation } from "vue-query"
 import safeAwait from "../../utils/safeAwait"
 import { AccessToken, Account } from "../types"
 import { accessTokenFromRefresh, login, register, logout } from "../utils/authLogin"
 import { queryClient } from "./useQueries"
-import { ref } from "@vue/runtime-core"
+import { toRefs, ref, reactive } from "vue"
 
 export const isAuthenticated = ref<boolean>(false)
+
+const state = reactive<{
+	accessToken: AccessToken | null,
+	isAuthenticated: boolean,
+	key: string | null
+}>({
+	accessToken: null,
+	key: null,
+	isAuthenticated: false
+})
+
+export const useCurrentToken = () => {
+	// check if the access token has expired 
+	return { ...toRefs(state) }
+}
 
 /** Get a public token. No login required */
 export const useToken = () => {
@@ -37,7 +53,7 @@ export const useToken = () => {
         	accessTokenFromRefresh(storedRefreshToken.secret)
         )
 
-  			if (error) throw new Error(error)
+  		if (error) throw new Error(error)
   			isAuthenticated.value = true
   			return accessResponse
   		}

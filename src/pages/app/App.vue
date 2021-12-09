@@ -1,62 +1,61 @@
 <template>
-  <div
-    v-if="user"
-    class="w-screen h-screen flex flex-col py-1"
-  >
+  <div>
     <div
       v-if="user"
-      class="flex px-4 border-b-2 border-black"
+      class="w-screen h-screen flex flex-col"
     >
-      <!-- <div class="flex space-x-4 items-center font-black text-2xl">
-        <Shere />
-        <span>SHERE</span>
-        <span class="p-1 ring-2 ring-black text-xs font-semibold rounded-lg">ALPHA</span>
-      </div> -->
-      <ToolBar 
-        :editor="editor"
-        :toolbar="user?.account.data.settings.tools"
-        :saved="'mounting'"
-      />
-      <User />
-    </div>
-    <div class="flex-grow flex overflow-hidden">
       <div
-        class="folders flex-shrink-0 overflow-x-hidden overflow-y-auto"
-        :style="{ width: computedFoldersX + 'px' }"
+        v-if="user"
+        class="flex px-4 py-1 border-b-2 border-black justify-between"
       >
-        <FileSystem :width="computedFoldersX" />
+        <ToolBar 
+          :editor="editor"
+          :toolbar="user?.account.data.settings.tools"
+          :saved="'mounting'"
+        />
+        <User />
       </div>
-      <div 
-        ref="bar" 
-        class="w-1 cursor-move h-full bg-black flex-shrink-0 z-20"
-      />
-      <router-view />
+      <div class="flex-grow flex overflow-hidden">
+        <div
+          class="folders flex-shrink-0 overflow-x-hidden overflow-y-auto"
+          :style="{ width: computedFoldersX + 'px' }"
+        >
+          <FileSystem :width="computedFoldersX" />
+        </div>
+        <div 
+          ref="bar" 
+          class="w-0.5 cursor-move h-full bg-black flex-shrink-0 z-20 relative"
+        >
+          <div 
+            :class="computedFoldersX == 0 ? 'ml-4' : '-ml-3.5'"
+            class="w-8 h-8 asbolute mt-8 flex items-center justify-center rounded-full bg-black text-white"
+            @click="foldersX == 0 ? foldersX = 350 : foldersX = 0"
+          >
+            <ri:arrow-left-line
+              class="transform transition-transform duration-150"
+              :class="computedFoldersX == 0 ? 'rotate-180' : 'rotate-0'"
+            />
+          </div>
+        </div>
+        <router-view />
+      </div>
     </div>
-  </div>
-  <Notifaction />
-  <VueQueryDevTools />
-  <div class="absolute bottom-4 right-4">
-    {{ currentDocument }}
+    <Notifaction />
+    <VueQueryDevTools />
   </div>
 </template>
 
 <script setup lang="ts">
-import Shere from "@shared/components/Shere.vue"
 import User from "./components/navigation/User.vue"
-import Navigation from "./components/navigation/Navigation.vue"
-import { computed, reactive, ref } from "vue"
-import { onKeyStroke, useDraggable } from "@vueuse/core"
+import { computed, ref } from "vue"
+import { useDraggable } from "@vueuse/core"
 import { useWindowSize } from "@vueuse/core"
 import { useHead } from "@vueuse/head"
-import { useDocument, useCurrentDocument } from "@hooks/useDocuments"
 import { VueQueryDevTools } from "vue-query/devtools"
 import { useToken } from "@hooks/useTokens"
-import { useRoute, useRouter } from "vue-router"
-import { queryClient } from "@hooks/useQueries"
 import Notifaction from "./components/notifications/Notifaction.vue"
 import FileSystem from "./components/file-system/FileSystem.vue"
 import ToolBar from "./components/editor/Editor/ToolBar/ToolBar.vue"
-import { toolbarData } from "./components/editor/Editor/ToolBar/data"
 import { useEditor } from "@hooks/useEditor"
 // because we set the background color in the head to black for the alpha
 // view. we do this because then there is no white flash. but we then need
@@ -71,14 +70,12 @@ useHead({
 })
 
 const editor = useEditor()
-const route = useRoute()
-const test = ref(queryClient.getQueryData("token"))
-const { width, height } = useWindowSize()
+const { width } = useWindowSize()
 const bar = ref<HTMLElement | null>(null)
 const { x: foldersX } = useDraggable(bar, {
 	initialValue: { x: 350, y: 40 },
 })
-// const curDoc = reactive(currentDocument)
+
 const { data: user } = useToken()
 const computedFoldersX = computed(() => {
 	return foldersX.value > 200
@@ -88,20 +85,6 @@ const computedFoldersX = computed(() => {
 		: 0
 })
 
-const { currentDocument } = useCurrentDocument()
-const search = ref<HTMLInputElement | null>(null)
-const router = useRouter()
-
-// onKeyStroke('Enter', (_) => {
-//     // why is ts making me check with twice?
-//     router.push({
-//         name: 'workspace',
-//         params: {
-//             id: search.value?.value
-//         }
-//     })
-//     curDoc.value = search.value?.value;
-//   })
 </script>
 
 <style lang="css">

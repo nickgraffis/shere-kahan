@@ -28,33 +28,41 @@ export const ButtonToActionMap: ButtonToAction = {
 		action: (editor) => editor?.chain().focus().toggleCode().run(),
 		isActive: (editor) => editor?.isActive ?  editor?.isActive("code") : false,
 	},
+	subscript: {
+		action: (editor) => editor?.chain().focus().toggleSubscript().run(),
+		isActive: (editor) => editor?.isActive ?  editor?.isActive("subscript") : false,
+	},
+	superscript: {
+		action: (editor) => editor?.chain().focus().toggleSuperscript().run(),
+		isActive: (editor) => editor?.isActive ?  editor?.isActive("superscript") : false,
+	},
 	"align-left": {
 		action: (editor) => editor?.chain().focus().setTextAlign("left").run(),
-		isActive: (editor) => editor?.isActive ?  editor?.isActive("align", "left") : false,
+		isActive: (editor) => editor?.isActive ?  editor?.isActive({ textAlign: "left" }) : false,
 	},
 	"align-center": {
 		action: (editor) => editor?.chain().focus().setTextAlign("center").run(),
-		isActive: (editor) => editor?.isActive ?  editor?.isActive("align", "center") : false,
+		isActive: (editor) => editor?.isActive ?  editor?.isActive({ textAlign: "center" }) : false,
 	},
 	"align-right": {
 		action: (editor) => editor?.chain().focus().setTextAlign("right").run(),
-		isActive: (editor) => editor?.isActive ?  editor?.isActive("align", "right") : false,
+		isActive: (editor) => editor?.isActive ?  editor?.isActive({ textAlign: "right" }) : false,
 	},
 	"align-justify": {
 		action: (editor) => editor?.chain().focus().setTextAlign("justify").run(),
-		isActive: (editor) => editor?.isActive ?  editor?.isActive("align", "justify") : false,
+		isActive: (editor) => editor?.isActive ?  editor?.isActive({ textAlign: "justify" }) : false,
 	},
-	"bullet-list": {
+	"bulletList": {
 		action: (editor) => editor?.chain().focus().toggleBulletList().run(),
 		isActive: (editor) => editor?.isActive ?  editor?.isActive("bulletList") : false,
 	},
-	"ordered-list": {
+	"orderedList": {
 		action: (editor) => editor?.chain().focus().toggleOrderedList().run(),
 		isActive: (editor) => editor?.isActive ?  editor?.isActive("orderedList") : false,
 	},
 	task: {
 		action: (editor) => editor?.chain().focus().toggleTaskList().run(),
-		isActive: (editor) => editor?.isActive ?  editor?.isActive("task") : false,
+		isActive: (editor) => editor?.isActive ?  editor?.isActive("taskList") : false,
 	},
 	sink: {
 		action: (editor) => {

@@ -54,7 +54,7 @@ const { currentDocument } = useCurrentDocument()
 const currentDocumentKey = reactive(currentDocument)
 console.log("CURDOC", currentDocument.value)
 const { isLoading, data, isError, error, refetch } = useDocument(currentDocument)
-
+refetch.value()
 </script>
 
 <style lang="css">
@@ -102,14 +102,5 @@ const { isLoading, data, isError, error, refetch } = useDocument(currentDocument
 /* Handle on hover */
 .editor::-webkit-scrollbar-thumb:hover {
   @apply bg-black;
-}
-
-/* Placeholder (on every new line) */
-.ProseMirror .is-empty::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: #ced4da;
-  pointer-events: none;
-  height: 0;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
   <button 
     ref="button"
-    :class="!editor?.view.focused ? 'p-2 rounded-md text-gray-300 cursor-pointer' : isActive ? 
-      ' p-2 rounded-md hover:bg-black cursor-pointer hover:text-white ' +
+    :class="false ? 'p-1 rounded-md text-gray-300 cursor-pointer' : isActive ? 
+      ' p-1 rounded-md hover:bg-black cursor-pointer hover:text-white ' +
       ' bg-black text-white ' +    
       computedClass?.[0] + 
       computedClass?.[1] : 
-      ' p-2 rounded-md hover:bg-black cursor-pointer hover:text-white '
+      ' p-1 rounded-md hover:bg-black cursor-pointer hover:text-white '
       + computedClass?.[0]"
   >
     <slot />
